@@ -4,6 +4,7 @@
 main.py
 
 DEPENDENCIES:
+	nltk
 	collocations.py
 
 DESCRIPTION:
@@ -35,7 +36,7 @@ parser = argparse.ArgumentParser(description="""
 args = parser.parse_args()
 
 # Define corpus
-corpus = os.path.join(DIR_ROOT, "corpora", "reuters21578")
+corpus =
 if args.corpus:
 	corpus = args.corpus
 	args.index = True
