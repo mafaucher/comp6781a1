@@ -23,73 +23,100 @@ import pickle
 
 import nltk.corpus
 
-from nltk import bigrams
-from nltk.stem.wordnet import WordNetLemmatizer
-from nltk.probability import FreqDist
+from nltk import bigrams, FreqDist
+from nltk.stem.porter import PorterStemmer
 from nltk.tag import pos_tag
+from nltk.metrics.association import BigramAssocMeasures
 
+chi_sq = BigramAssocMeasures.chi_sq
+
+# TODO: remove paths if not needed
+# PATHS
 
 DIR_ROOT = path.join(path.dirname(__file__), '..')
-DIR_DATA = path.join(DIR_ROOT, "data")
 
-if not path.exists(DIR_DATA):
-	makedirs(DIR_DATA)
+POSSIBLE = ["cf", "stem"]
 
-POSSIBLE = ["raw", "cf", "lemma", "tok"]
+# DEFAULT OPTIONS
 
-def show(freqNames, corpus, topn):
+options = []
+filters = ['JN', 'NN']
+topn = 50
+corpus = nltk.corpus.brown
+stemmer = PorterStemmer()
+
+# List of frequency distributions
+freqs = []
+
+def posFilter(taggedBigram):
 	"""
-
+	Return bigram frequency distribution filtered by part of speech tag filters.
 	"""
-	for name in freqNames:
-		assert name in POSSIBLE
-	freq = [None] * len(freqNames)
-	# Calculate frequencies or load precalculated frequencies
-	for i in range(len(freqNames)):
-		filename = path.join(DIR_DATA, corpus+"_"+freqNames[i]+".dat")
-		try:
-			freq[i] = pickle.load(open(filename))
-		except IOError:
-			freq[i] = collocations(freqNames[i], getattr(nltk.corpus, corpus))
-			pickle.dump(freq[i], open(filename, 'w'))
-		finally:
-			assert freq[i]
+	w1, w2 = taggedBigram
+	if w1[1][0] + w2[1][0] in filters:
+		return True
+	return False
 
-	# Create a table to compare top collocations
-	compare(freq, topn)
-
-
-def collocations(type, corpus):
+def rmPos(taggedBigram):
 	"""
-	Calculates collocations using a method type.
+	remove part of speech tag from bigram terms.
 	"""
-	if type == "raw":
-		bg = bigrams(corpus.words())
-		return FreqDist(bg)
-	if type == "cf":
-		bg = bigrams(map(str.lower, corpus.words()))
-		return FreqDist(bg)
-	if type == "lemma":
-		l = WordNetLemmatizer()
-		bg = bigrams(map(l.lemmatize, corpus.words()))
-		return FreqDist(bg)
-	if type == "tk":
-		bg = bigrams(corpus)
-	if type == "pos":
-		# FIXME: filters are a mess...
-		bg_raw = bigrams(corpus.tagged_words())
-		bg_pos = filter(lambda x: x[0][1][0]+x[1][1][0] in filters, bg_raw)
-		bg = [(w1[0], w2[0]) for (w1, w2) in bg_pos]
-		return FreqDist(bg)
-	return None
+	w1, w2 = taggedBigram
+	return (w1[0], w2[0])
 
+def preprocess(token):
+	"""
+	Apply preprocessing options to token
+	"""
+	if "cf" in options:
+		token = str.lower(token)
+	if "stem" in options:
+		token = stemmer.stem(token)
+	return token
 
-def compare(lists, topn=50):
+def preprocessBigram(bigram):
+	"""
+	Apply preprocessing options to bigram
+	"""
+	if "cf" in options:
+		bigram = (str.lower(bigram[0]), str.lower(bigram[1]))
+	if "stem" in options:
+		bigram = (stemmer.stem(bigram[0]), stemmer.stem(bigram[1]))
+	return bigram
+
+def getPremarginal(collocations, token):
+	"""
+	Get the number of times the given token occurs in the first position of
+	the bigram.
+	"""
+	bgs = filter(lambda x: x[0] == token, collocations)
+	marginal = sum([collocations[bigram] for bigram in bgs])
+	return marginal
+
+def getPostmarginal(collocations, token):
+	"""
+	Get the number of times the given token occurs in the first position of
+	the bigram.
+	"""
+	bgs = filter(lambda x: x[1] == token, collocations)
+	marginal = sum([collocations[bigram] for bigram in bgs])
+	return marginal
+
+def chi_sqTest(collocations):
+	results = {}
+	n = collocations.N()
+	for bigram in collocations:
+		marginals = (getPremarginal(collocations, bigram[0]), \
+				     getPostmarginal(collocations, bigram[1]))
+		results[bigram] = chi_sq(collocations[bigram], marginals, n)
+	return results
+
+def compare(n=topn):
 	"""
 	Create a table 
 	"""
-	for vals in zip(*(lists + [range(topn)])):
+	for vals in zip(*(freqs + [range(topn)])):
 		row = ["|"]
-		for (v, l) in zip(vals, lists):
-			row.extend([str(l[v]), v[0], v[1], "|"])
+		for (v, f) in zip(vals, freqs):
+			row.extend([str(f[v]), v[0], v[1], "|"])
 		print "\t".join(row)
