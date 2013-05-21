@@ -40,6 +40,8 @@ args = parser.parse_args()
 
 # Set options
 
+
+
 if args.text:
 	try:
 		corpus = getattr(corpus, args.text)
@@ -76,7 +78,7 @@ posFreq = FreqDist(bg)
 freqs.append(posFreq)
 
 # Collocations using chi^2 test
-#freqs.append(chi_sqTest(bigramFreq))
-#freqs.append(chi_sqTest(posFreq))
+freqs.append(chi_sqTest(bigramFreq))
+freqs.append(chi_sqTest(posFreq))
 
 compare()

@@ -1,0 +1,212 @@
+%%%%%%%%%%%%%%%%
+% DESCRIPTION: %
+%%%%%%%%%%%%%%%%
+%
+% Template Author: Marc-André Faucher
+% Last update: 13-01-13
+%
+% 
+%%%%%%%%%%%%%%
+% REMINDERS: %
+%%%%%%%%%%%%%%
+%
+% Special Characters: # $ % & ~ _ ^ \ { }
+%
+% Enumerate: \begin{enumerate}[(a)] [1.] [CHAPTER 1 - ]
+%		\item 1st entry
+%		\item 2nd entry ...
+%	    \end{enumerate}
+%
+% Include Graphics:
+%\begin{center}
+%	\includegraphics[scale=0.6]{figures/pipeline.png}
+%	{\bf Fig. 1:} Modules in the University Pipeline
+%\end{center}
+%
+% Include Table:
+%\begin{center}
+%{\bf Table 1:} Number of Manual Annotations
+%\begin{tabular}{|l|l|l|l|l|l|l|}
+%\hline
+%Document   & Wellington & Surge & Professor & Candidate & American & Total \\
+%\hline
+%Token      & 776 & 1009  & 1051      & 1509      & 922      & 5267  \\ 
+%Position   & 5   & 0     & 6         & 22        & 20       & 53    \\ 
+%University & 9   & 32    & 12        & 38        & 24       & 115   \\ 
+%Unit       & 0   & 1     & 8         & 44        & 12       & 65    \\ 
+%\hline
+%\end{tabular}
+%\end{center}
+%
+% Force line break: \\
+% 	Additional: \item \hspace*{\fill} \\ 
+%
+% Force page break: \pagebreak
+% 
+% Fixed-width text: \begin{verbatim}...{verbatim}
+%
+%%%%%%%%%%%
+% HEADER: %
+%%%%%%%%%%%
+%
+\documentclass[12pt]{article}
+\usepackage[utf8x]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage[pdftex]{graphicx}
+\usepackage{cite,hyperref}
+\usepackage{enumerate,url,multicol,setspace,graphicx}
+\usepackage{amssymb,amsmath}
+\usepackage{listings}
+\usepackage{fancyhdr}
+%
+%%%%%%%%%%%%%
+% COMMANDS: %
+%%%%%%%%%%%%%
+%
+\newcounter{excounter}
+\newenvironment{ex}{\begin{quote}%
+		\refstepcounter{excounter}%
+		\textbf{Ex. \arabic{excounter}}%
+	}{%
+	\end{quote}%
+}
+\newcommand{\tab}{\hspace*{0.5cm}}
+%
+%%%%%%%%%%
+% TITLE: %
+%%%%%%%%%%
+%
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Marc-Andr\'e~Faucher~(9614729)}
+\chead{COMP~6781}
+\rhead{Assignment~1~---~May~20\textsuperscript{th}~2013}
+\begin{document}
+%
+%\title{ {\bf COMP 6781: Statistical NLP \\
+%Assignment 1 } }
+%\author{Marc-André Faucher}
+%\date{\today}
+%\begin{document}
+%\maketitle
+%
+%%%%%%%%%%%%%
+% DOCUMENT: %
+%%%%%%%%%%%%%
+%
+
+\section*{Question 1: Linguistic Essentials}
+
+\subsection*{Exercise: 3.1}
+
+The/\emph{Det} lemon/\emph{Noun} is/\emph{Verb} an/\emph{Det}
+essential/\emph{Adj} cooking/\emph{Adj} ingredient/\emph{Noun}. Its/\emph{Pro}
+sharply/\emph{Adv} fragrant/\emph{Adj} juice/\emph{Noun} and/\emph{Con}
+tangy/\emph{Adj} rind/\emph{Noun} is/\emph{Verb} added/\emph{Verb}
+to/\emph{Prep} sweet/\emph{Adj} and/\emph{Con} savory/\emph{Adj}
+dishes/\emph{Noun} in/\emph{Prep} every/\emph{Det} cuisine/\emph{Noun}. \\
+
+\footnotesize{Note: The following abbreviations where used:
+	\emph{Det}:~\emph{Determiner}, \emph{Adj}:~\emph{Adjective},
+	\emph{Adv}:~\emph{Adverb}, \linebreak \emph{Pro}:~\emph{Pronoun},
+	\emph{Con}:~\emph{Conjunction}, \emph{Prep}:~\emph{Preposition}.}
+	\normalsize{}
+
+\subsection*{Excercise: 3.3}
+
+The subject is \emph{He}, the direct object is \emph{apple pie} and the
+indirect object is \emph{her}.
+
+\subsection*{Excercise: 3.4}
+
+In the first sentence, Mary is defending another person marked by the
+third person pronoun \emph{her}, while in the second sentence Mary is
+defending \emph{herself}, that is, she is defending Mary.
+
+\subsection*{Excercise: 3.9}
+
+Although they can be identical tokens, particles are distinguished from
+prepositions because they form a collocation with the preceding verb
+which modifies the sense of the verb phrase it is part of. Prepositions
+are the head of a prepositional phrase, which can usually be removed
+without dramatically changing the semantics of the sentence.
+
+\begin{enumerate}[a.]
+	\item Preposition (\emph{in London} is a prepositional phrase).
+	\item Particle (\emph{move in} is a semantic unit meaning to change residence).
+	\item Particle (\emph{puts in} is a semantic unit meaning spending time or energy).
+	\item Preposition (\emph{in the wrong folder} is a prepositional phrase).
+\end{enumerate}
+
+\subsection*{Excercise: 3.12}
+
+\begin{enumerate}[a.]
+	\item Mary saw the man \emph{with the telescope}.
+
+The prepositional phrase could attach to the verb \emph{saw} (Mary saw the man
+through a telescope) or to the \emph{the man} (Mary saw a man carrying a
+telescope).
+
+	\item The company experienced growth in classified advertising
+			\emph{and preprinted inserts}.
+
+The conjunction could attach to the noun phrase (\emph{classified advertising}
+and \emph{preprinted inserts}), in this case \emph{preprinted} is an adjective
+much like \emph{classified}. The conjunction could also attach to the verb
+phrase (\emph{experienced growth} and \emph{preprinted inserts}), this would
+imply \emph{preprinted} is a verb, like \emph{experienced}.
+\end{enumerate}
+
+\pagebreak
+
+\section*{Question 2: Collocations}
+
+\subsection*{Introduction}
+
+Finding collocations is an important task in natural language processing (NLP).
+
+\subsection*{Program}
+
+The program used to perform the experiments was written in Python, using the
+Natural Language Toolkit (NLTK)\cite{nltk}.
+
+\subsection*{Experiment}
+\subsection*{Results}
+\subsection*{Future Work}
+
+%1. List the 50 most frequent bigrams in your corpus along with their frequency.
+%2. Use a part-of-speech tagger of your choice (see http://www-nlp.stanford.edu/links/statnlp.html#Taggers for
+%  free taggers) and develop tag patterns to filter your bigrams. Show the best collocations you find this way.
+%3. Develop and experiment with 2 other methods discussed in class to find collocations. Analyze your results
+%  and compare them to those you had in step 2 above.
+%	
+%Write a report (~4 pages) to describe your experiments. Your report must describe:
+%
+%- The program:
+%- Briefly describe your code (choice of language, data structures, ...)
+%- Indicate the instructions necessary to run your code (files, commands, ...)
+%
+%- The experiments:
+%- Describe any assumptions that you made (definition of a word)
+%- clearly indicate the part-of-speech tagger that you used, and the tag patterns you developed
+%- Describe your corpora briefly (size, source, ...)
+%- Describe the 2 methods you chose to implement (do not re-explain the theory, but just the parameters
+%you used; window size, ...)
+%
+%- The results:
+%- Analyse your results. Explain what went right, and what went wrong. For example, which method
+%seemed to give the best results? Do the methods perform the same way on both corpora?
+%- Show some examples of the “best/most interesting” collocations that you extracted and show some
+%examples of the “worst” collocations that you extracted. Analyse these. Why do you think you have
+%the results that you have?
+%
+%- Future Work:
+%- Indicate what you could improve if you had the time and energy.
+%
+%- References
+%- Properly indicate all external sources that you used to do your assignment.
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}

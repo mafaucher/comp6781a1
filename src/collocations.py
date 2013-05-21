@@ -30,15 +30,10 @@ from nltk.metrics.association import BigramAssocMeasures
 
 chi_sq = BigramAssocMeasures.chi_sq
 
-# TODO: remove paths if not needed
-# PATHS
-
-DIR_ROOT = path.join(path.dirname(__file__), '..')
-
 POSSIBLE = ["cf", "stem"]
 
 # DEFAULT OPTIONS
-
+ddPOSSIBLE = ["cf", "stem"]
 options = []
 filters = ['JN', 'NN']
 topn = 50
@@ -103,12 +98,15 @@ def getPostmarginal(collocations, token):
 	return marginal
 
 def chi_sqTest(collocations):
-	results = {}
+	"""
+	Chi squared test on (top n)*2 collocations.
+	"""
+	results = []
 	n = collocations.N()
-	for bigram in collocations:
+	for (bigram, i) in zip(collocations, range(topn*2)):
 		marginals = (getPremarginal(collocations, bigram[0]), \
 				     getPostmarginal(collocations, bigram[1]))
-		results[bigram] = chi_sq(collocations[bigram], marginals, n)
+		results.append((bigram, collocations[bigram], (chi_sq(collocations[bigram], marginals, n))))
 	return results
 
 def compare(n=topn):
@@ -118,5 +116,8 @@ def compare(n=topn):
 	for vals in zip(*(freqs + [range(topn)])):
 		row = ["|"]
 		for (v, f) in zip(vals, freqs):
-			row.extend([str(f[v]), v[0], v[1], "|"])
+			if type(f) is FreqDist:
+				row.extend([str(f[v]), v[0], v[1], "|"])
+			else:
+				row.extend([str(v[1]), v[0][0], v[0][1], str(v[2]), "|"])
 		print "\t".join(row)
